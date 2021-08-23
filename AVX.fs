@@ -39,6 +39,7 @@ let hadamardProduct (aKeys: Span<int>, aValues: Span<float>, bKeys: Span<int>, b
             elif aKeys.[aIdx] > bKeys.[bIdx + 3] then
                 // REMEMBER!! bIdx needs to stride, not increment
                 bIdx <- bIdx + 8
+                // We only want to load new values when necessary
                 if bIdx < lastBlockIdx then
                     bVector <- Avx2.LoadVector256 (NativePtr.add bPointer bIdx)
             else
