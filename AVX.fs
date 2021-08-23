@@ -8,10 +8,10 @@ open System.Numerics
 open System.Runtime.Intrinsics.X86
 open System.Runtime.Intrinsics
 
-let hadamardProduct (aKeys: Span<int>, aValues: Span<float>, bKeys: Span<int>, bValues: Span<float>) =
-    let maxN = Math.Min (aKeys.Length, bKeys.Length)
-    let outKeys = Array.zeroCreate maxN
-    let outValues = Array.zeroCreate maxN
+let private auxHadamardProduct (aKeys: Span<int>, aValues: Span<float>, bKeys: Span<int>, bValues: Span<float>) =
+    // We know that there will be fewer a Key/Value pairs than b
+    let outKeys = Array.zeroCreate aKeys.Length
+    let outValues = Array.zeroCreate aKeys.Length
 
     let mutable aIdx = 0
     let mutable bIdx = 0
@@ -63,3 +63,10 @@ let hadamardProduct (aKeys: Span<int>, aValues: Span<float>, bKeys: Span<int>, b
     let resultValues = Memory (outValues, 0, outIdx)
 
     resultKeys, resultValues
+
+
+let hadamardProduct (aKeys: Span<int>, aValues: Span<float>, bKeys: Span<int>, bValues: Span<float>) =
+    if aKeys.Length < bKeys.Length then
+        auxHadamardProduct (aKeys, aValues, bKeys, bValues)
+    else
+        auxHadamardProduct (bKeys, bValues, aKeys, aValues)

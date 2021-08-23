@@ -4,21 +4,20 @@ open BenchmarkDotNet.Running
 
 let rng = Random 123
 
+let maxIndexValue = 10_000_000
 let aIndexCount = 10_000
-let aMaxIndex = 100_000
-let bIndexCount = 10_000
-let bMaxIndex = 100_000
+let bIndexCount = 10
 
 let aKeys =
     let x = 
-        [|for _ in 1 .. aIndexCount -> rng.Next (0, aMaxIndex)|]
+        [|for _ in 1 .. aIndexCount -> rng.Next (0, maxIndexValue)|]
         |> Array.distinct
     Array.sortInPlace x
     x
 
 let bKeys =
     let x = 
-        [|for _ in 1 .. bIndexCount -> rng.Next (0, bMaxIndex)|]
+        [|for _ in 1 .. bIndexCount -> rng.Next (0, maxIndexValue)|]
         |> Array.distinct
     Array.sortInPlace x
     x
