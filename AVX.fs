@@ -19,7 +19,7 @@ let hadamardProduct (aKeys: Span<int>, aValues: Span<float>, bKeys: Span<int>, b
 
     if bKeys.Length > 8 then
 
-        let lastBlockIdx = bKeys.Length - (bKeys.Length % 4)
+        let lastBlockIdx = bKeys.Length - (bKeys.Length % 8)
         let bPointer = && (bKeys.GetPinnableReference ())
         let mutable bVector = Avx2.LoadVector256 (NativePtr.add bPointer bIdx)
 
@@ -36,7 +36,7 @@ let hadamardProduct (aKeys: Span<int>, aValues: Span<float>, bKeys: Span<int>, b
                 outIdx <- outIdx + 1
                 // REMEMBER, bIdx is testing 4 values at a time so we don't always want to jump
 
-            elif aKeys.[aIdx] > bKeys.[bIdx + 3] then
+            elif aKeys.[aIdx] > bKeys.[bIdx + 7] then
                 // REMEMBER!! bIdx needs to stride, not increment
                 bIdx <- bIdx + 8
                 // We only want to load new values when necessary
