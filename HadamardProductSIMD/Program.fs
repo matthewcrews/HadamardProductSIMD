@@ -26,41 +26,23 @@ let bKeys =
 let aValues = [| for _ in 1 .. aKeys.Length -> rng.NextDouble () |]
 let bValues = [| for _ in 1 .. bKeys.Length -> rng.NextDouble () |]
 
-let hadamardProduct (aKeys: Span<int>, aValues: Span<float>, bKeys: Span<int>, bValues: Span<float>) =
-    let maxN = Math.Min (aKeys.Length, bKeys.Length)
-    let outKeys = Array.zeroCreate maxN
-    let outValues = Array.zeroCreate maxN
-
-    let mutable aIdx = 0
-    let mutable bIdx = 0
-    let mutable outIdx = 0
-
-    while aIdx < aKeys.Length && bIdx < bKeys.Length do
-        
-        if aKeys.[aIdx] = bKeys.[bIdx] then
-            outKeys.[outIdx] <- aKeys.[aIdx]
-            outValues.[outIdx] <- aValues.[aIdx] * bValues.[bIdx]
-            outIdx <- outIdx + 1
-            aIdx <- aIdx + 1
-            bIdx <- bIdx + 1
-        elif aKeys.[aIdx] < bKeys.[bIdx] then
-            aIdx <- aIdx + 1
-        else
-            bIdx <- bIdx + 1
-
-    let resultKeys = Memory (outKeys, 0, outIdx)
-    let resultValues = Memory (outValues, 0, outIdx)
-
-    resultKeys, resultValues
-
 
 type Benchmarks () =
 
     [<Benchmark>]
     member _.Test () =
-        hadamardProduct (aKeys.AsSpan(), aValues.AsSpan(), bKeys.AsSpan(), bValues.AsSpan())
+        HadamardProduct.hadamardProduct (aKeys.AsSpan(), aValues.AsSpan(), bKeys.AsSpan(), bValues.AsSpan())
 
 [<EntryPoint>]
 let main argv =
-    let summary = BenchmarkRunner.Run<Benchmarks>()
+    //let summary = BenchmarkRunner.Run<Benchmarks>()
+
+    let aKeys = [|1 .. 2 .. 9|]
+    let bKeys = [|1..9|]
+    let aValues = [|1.0 .. 2.0 .. 9.0|]
+    let bValues = [|1.0..9.0|]
+
+    let r = HadamardProduct.hadamardProduct (aKeys.AsSpan(), aValues.AsSpan(), bKeys.AsSpan(), bValues.AsSpan())
+
+
     0 // return an integer exit code
