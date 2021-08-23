@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="AVX.fs" />
+    <Compile Include="SSE.fs" />
+    <Compile Include="Scalar.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
