@@ -4,10 +4,10 @@ open BenchmarkDotNet.Running
 
 let rng = Random 123
 
-let aIndexCount = 1_000
-let aMaxIndex = 10_000
-let bIndexCount = 1_000
-let bMaxIndex = 10_000
+let aIndexCount = 10_000
+let aMaxIndex = 100_000
+let bIndexCount = 10_000
+let bMaxIndex = 100_000
 
 let aKeys =
     let x = 
@@ -30,19 +30,22 @@ let bValues = [| for _ in 1 .. bKeys.Length -> rng.NextDouble () |]
 type Benchmarks () =
 
     [<Benchmark>]
-    member _.Test () =
-        HadamardProduct.hadamardProduct (aKeys.AsSpan(), aValues.AsSpan(), bKeys.AsSpan(), bValues.AsSpan())
+    member _.Scalar () =
+        Scalar.hadamardProduct (aKeys.AsSpan(), aValues.AsSpan(), bKeys.AsSpan(), bValues.AsSpan())
+
+    [<Benchmark>]
+    member _.SSE () =
+        SSE.hadamardProduct (aKeys.AsSpan(), aValues.AsSpan(), bKeys.AsSpan(), bValues.AsSpan())
+
+    [<Benchmark>]
+    member _.AVX () =
+        AVX.hadamardProduct (aKeys.AsSpan(), aValues.AsSpan(), bKeys.AsSpan(), bValues.AsSpan())
+
+
 
 [<EntryPoint>]
 let main argv =
-    //let summary = BenchmarkRunner.Run<Benchmarks>()
 
-    let aKeys = [|1 .. 2 .. 9|]
-    let bKeys = [|1..9|]
-    let aValues = [|1.0 .. 2.0 .. 9.0|]
-    let bValues = [|1.0..9.0|]
-
-    let r = HadamardProduct.hadamardProduct (aKeys.AsSpan(), aValues.AsSpan(), bKeys.AsSpan(), bValues.AsSpan())
-
+    let summary = BenchmarkRunner.Run<Benchmarks>()
 
     0 // return an integer exit code

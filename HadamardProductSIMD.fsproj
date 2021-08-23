@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="HadamardProduct.fs" />
+    <Compile Include="AVX.fs" />
+    <Compile Include="SSE.fs" />
+    <Compile Include="Scalar.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
