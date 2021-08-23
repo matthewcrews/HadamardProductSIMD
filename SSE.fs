@@ -19,9 +19,9 @@ let hadamardProduct (aKeys: Span<int>, aValues: Span<float>, bKeys: Span<int>, b
 
     if bKeys.Length > 4 then
 
-        let lastBlockIdx = bKeys.Length - (bKeys.Length % 4)
         let bPointer = && (bKeys.GetPinnableReference ())
         let mutable bVector = Sse2.LoadVector128 (NativePtr.add bPointer bIdx)
+        let lastBlockIdx = bKeys.Length - (bKeys.Length % Vector128.Count)
 
         while aIdx < aKeys.Length && bIdx < lastBlockIdx do
             let aVector = Vector128.Create aKeys.[aIdx]
@@ -34,11 +34,11 @@ let hadamardProduct (aKeys: Span<int>, aValues: Span<float>, bKeys: Span<int>, b
                 outValues.[outIdx] <- aValues.[aIdx] * bValues.[bIdx + bIdxOffset]
                 aIdx <- aIdx + 1
                 outIdx <- outIdx + 1
-                // REMEMBER, bIdx is testing 4 values at a time so we don't always want to jump
+                // REMEMBER, bIdx is testing several values at a time so we don't always want to jump
 
-            elif aKeys.[aIdx] > bKeys.[bIdx + 3] then
+            elif aKeys.[aIdx] > bKeys.[bIdx + Vector128.Count - 1] then
                 // REMEMBER!! bIdx needs to stride, not increment
-                bIdx <- bIdx + 4
+                bIdx <- bIdx + Vector128.Count
                 // We only want to load new values when necessary
                 if bIdx < lastBlockIdx then
                     bVector <- Sse2.LoadVector128 (NativePtr.add bPointer bIdx)
